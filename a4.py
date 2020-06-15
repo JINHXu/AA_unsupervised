@@ -1,9 +1,17 @@
 #!/usr/bin/env python3
 """ Statistical Language Processing (SNLP), Assignment 4
     See <https://snlp2020.github.io/a4/> for detailed instructions.
-
-    <Please insert your name and the honor code here.>
+    Course:      Statistical Language processing - SS2020
+    Assignment:  a4
+    Author(s):   Jinghua Xu
+    Description: Unsupervised learning with sklearn, an experiment with dimensionality reduction with PCA and clustering using k-means.
+    
+    Honor Code:  I pledge that this program represents my own work.
 """
+
+import numpy as np
+import gzip
+
 
 def read_data(fname):
     """ Read the tab-separated data.
@@ -20,6 +28,25 @@ def read_data(fname):
                 the data.
     texts:      The corresponding texts (a sequence, e.g., a list)
     """
+
+    names, texts = list(), list()
+    with gzip.open(fname, 'rt') as fp:
+        header = next(fp)
+        for line in fp:
+            data = line.split('\t', 1)
+
+            if len(data) == 1:
+                texts[-1] += data[0]
+                continue
+
+            names.append(data[0])
+            texts.append(data[1])
+
+    names = np.array(names)
+    texts = np.array(texts)
+
+    return names, texts
+
 
 def encode_people(names, texts):
     """ Encode each person in the data as a (sparse) vector.
@@ -42,6 +69,7 @@ def encode_people(names, texts):
     nameset:    (Unique) set of screen names 
     vectors:    Corresponding average word-count vectors
     """
+
 
 def most_similar(name, names, vectors, n=10):
     """ Print out most similar and most-dissimilar screen names for a screen name.
@@ -86,6 +114,7 @@ def reduce_dimensions(vectors, explained_var=0.99):
                     (much) lower than original n_features.
     """
 
+
 def plot(names, vec, xi=0, yi=1, filename='plot-2d.pdf'):
     """ Plot the names on a 2D graph.
 
@@ -103,6 +132,7 @@ def plot(names, vec, xi=0, yi=1, filename='plot-2d.pdf'):
     Returns: None
     """
 
+
 def cluster_kmeans(names, vectors, k=5):
     """ Cluster given data using k-means, print the resulting clusters of names.
 
@@ -115,6 +145,7 @@ def cluster_kmeans(names, vectors, k=5):
 
     Returns: None
     """
+
 
 def plot_scree(vectors, max_k=20, filename="scree-plot.pdf"):
     """ Plot a scree plot of silhouette score of k-means clustering.
@@ -134,4 +165,13 @@ def plot_scree(vectors, max_k=20, filename="scree-plot.pdf"):
 
 
 if __name__ == "__main__":
-    # Your main code goes below - not required for the assignment.
+    # 4.1
+    usernames, texts = read_data(
+        '/Users/xujinghua/a4-jinhxu-and-beabea1234/a4-corpus-small.tsv.gz')
+
+    # tests
+    for i in range(0, 50000):
+        print((usernames[i], texts[i]))
+
+    print(usernames.size)
+    print(texts.size)
