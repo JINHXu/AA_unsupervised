@@ -12,6 +12,9 @@
 import numpy as np
 import gzip
 
+import itertools
+from sklearn.feature_extraction.text import CountVectorizer
+
 
 def read_data(fname):
     """ Read the tab-separated data.
@@ -67,8 +70,32 @@ def encode_people(names, texts):
     Returns: (a tuple)
     -----------
     nameset:    (Unique) set of screen names 
-    vectors:    Corresponding average word-count vectors
+    avg_vectors:    Corresponding average word-count vectors
     """
+    nameset = []
+    avg_vectors = []
+
+    # vectorize the texts
+    vectorizer = CountVectorizer()
+    vectorized_texts = vectorizer.fit_transform(texts).todense()
+
+    # dictionary stores the mapping from each name to its corpus
+    name2vectors = dict()
+
+    for (name, vector) in zip(names, vectorized_texts):
+        if name not in name2vectors:
+            name2vectors[name] = [vector]
+        else:
+            name2vectors[name].append(vector)
+
+    for name, vectors in name2vectors.items():
+        nameset.append(name)
+        # average over these document vectors for each person
+        vectors = np.array(vectors)
+        avg_vector = np.mean(vectors, axis=0)
+        avg_vectors.append(avg_vector)
+
+    return nameset, avg_vectors
 
 
 def most_similar(name, names, vectors, n=10):
@@ -170,8 +197,17 @@ if __name__ == "__main__":
         '/Users/xujinghua/a4-jinhxu-and-beabea1234/a4-corpus-small.tsv.gz')
 
     # tests
+    '''
     for i in range(0, 50000):
         print((usernames[i], texts[i]))
 
     print(usernames.size)
     print(texts.size)
+    '''
+
+    # 4.2
+    nameset, vectors = encode_people(usernames, texts)
+
+    # tests
+    print(nameset)
+    print(vectors)
