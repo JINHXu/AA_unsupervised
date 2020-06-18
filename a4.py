@@ -73,11 +73,13 @@ def encode_people(names, texts):
     avg_vectors:    Corresponding average word-count vectors
     """
     nameset = []
-    avg_vectors = []
 
     # vectorize the texts
     vectorizer = CountVectorizer()
     vectorized_texts = vectorizer.fit_transform(texts).toarray()
+
+    n = len(vectorized_texts[0])
+    avg_vectors = np.empty((0, n), int)
 
     # dictionary stores the mapping from each name to its corpus
     name2vectors = dict()
@@ -92,9 +94,8 @@ def encode_people(names, texts):
         nameset.append(name)
         # average over these document vectors for each person
         avg_vector = np.mean(vectors, axis=0)
-        avg_vectors.append(avg_vector)
-
-    avg_vectors = np.array(avg_vectors)
+        avg_vector = np.reshape(avg_vector, (1, avg_vector.size))
+        avg_vectors = np.append(avg_vectors, avg_vector, axis=0)
 
     return nameset, avg_vectors
 
@@ -214,5 +215,5 @@ if __name__ == "__main__":
     print(nameset)
     print(vectors)
     print(len(nameset))
-    print(len(vectors))
+    print(type(vectors))
     '''
