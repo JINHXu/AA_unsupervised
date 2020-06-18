@@ -8,6 +8,7 @@
     
     Honor Code:  I pledge that this program represents my own work.
 """
+import time
 
 import numpy as np
 import gzip
@@ -72,6 +73,7 @@ def encode_people(names, texts):
     nameset:    (Unique) set of screen names 
     avg_vectors:    Corresponding average word-count vectors
     """
+    '''
     nameset = []
 
     # vectorize the texts
@@ -96,6 +98,32 @@ def encode_people(names, texts):
         avg_vector = np.mean(vectors, axis=0)
         avg_vector = np.reshape(avg_vector, (1, avg_vector.size))
         avg_vectors = np.append(avg_vectors, avg_vector, axis=0)
+
+    return nameset, avg_vectors
+    '''
+    nameset = []
+    avg_vectors = []
+
+    # vectorize the texts
+    vectorizer = CountVectorizer()
+    vectorized_texts = vectorizer.fit_transform(texts).toarray()
+
+    # dictionary stores the mapping from each name to its corpus
+    name2vectors = dict()
+
+    for (name, vector) in zip(names, vectorized_texts):
+        if name not in name2vectors:
+            name2vectors[name] = [vector]
+        else:
+            name2vectors[name].append(vector)
+
+    for name, vectors in name2vectors.items():
+        nameset.append(name)
+        # average over these document vectors for each person
+        avg_vector = np.mean(vectors, axis=0)
+        avg_vectors.append(avg_vector)
+
+    avg_vectors = np.array(avg_vectors)
 
     return nameset, avg_vectors
 
@@ -207,6 +235,8 @@ if __name__ == "__main__":
     print(texts.size)
     '''
 
+    '''start_time = time.time()'''
+
     # 4.2
     nameset, vectors = encode_people(usernames, texts)
 
@@ -215,5 +245,8 @@ if __name__ == "__main__":
     print(nameset)
     print(vectors)
     print(len(nameset))
+    print(len(vectors))
     print(type(vectors))
+    print(type(vectors[0]))
+    print("--- %s seconds ---" % (time.time() - start_time))
     '''
