@@ -16,6 +16,8 @@ import gzip
 import itertools
 from sklearn.feature_extraction.text import CountVectorizer
 
+from sklearn.metrics.pairwise import cosine_similarity
+
 
 def read_data(fname):
     """ Read the tab-separated data.
@@ -144,6 +146,58 @@ def most_similar(name, names, vectors, n=10):
 
     Returns: None
     """
+    # stores the n most similar usernames to name, in tuple(name, score)
+    similar_n = []
+    dissimilar_n = []
+
+    cosine_similarities = []
+
+    # the vector of name
+    name_vector = vectors[names.index(name)]
+
+    for vector in vectors:
+        # array.reshape(1, -1) if it contains a single sample
+        name_vector = name_vector.reshape(1, -1)
+        vector = vector.reshape(1, -1)
+        cosine_similarities.append(
+            cosine_similarity(name_vector, vector)[0][0])
+    # test
+    # print(cosine_similarities)
+
+    # prepare the copies as we remove from the list for max and min n times
+    cs_cp4max = cosine_similarities.copy()
+    cs_cp4min = cosine_similarities.copy()
+
+    # paralel names lists
+    names_cp4max = names.copy()
+    names_cp4min = names.copy()
+
+    # most similar n and most dissimilar n
+    for _ in range(n):
+        # find, store and remove max
+        maxi = max(cs_cp4max)
+        user = names_cp4max[cs_cp4max.index(maxi)]
+        similar_n.append((user, maxi))
+        cs_cp4max.remove(maxi)
+        names_cp4max.remove(user)
+
+        # find, store and remove min
+        mini = min(cs_cp4min)
+        user = names_cp4min[cs_cp4min.index(mini)]
+        dissimilar_n.append((user, mini))
+        cs_cp4min.remove(mini)
+        names_cp4min.remove(user)
+
+    # print to screen
+    print(f'Most similar {n} users to {name}:')
+    for idx in range(n):
+        print(
+            f'name: {similar_n[idx][0]}, score(cosine similarity): {similar_n[idx][1]}')
+
+    print(f'Most dissimilar {n} users to {name}:')
+    for idx in range(n):
+        print(
+            f'name: {dissimilar_n[idx][0]}, score(cosine similarity): {dissimilar_n[idx][1]}')
 
 
 def reduce_dimensions(vectors, explained_var=0.99):
@@ -250,3 +304,6 @@ if __name__ == "__main__":
     print(type(vectors[0]))
     print("--- %s seconds ---" % (time.time() - start_time))
     '''
+
+    # 4.3
+    most_similar('Lagarde', nameset, vectors)
