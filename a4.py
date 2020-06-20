@@ -19,6 +19,9 @@ from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.decomposition import PCA
 
+from matplotlib import pyplot as plt
+import matplotlib.backends.backend_pdf
+
 
 def read_data(fname):
     """ Read the tab-separated data.
@@ -266,6 +269,13 @@ def plot(names, vec, xi=0, yi=1, filename='plot-2d.pdf'):
 
     Returns: None
     """
+    pdf = matplotlib.backends.backend_pdf.PdfPages(filename)
+    fig, ax = plt.subplots()
+    for i, name in enumerate(names):
+        ax.scatter(vec[i][xi], vec[i][yi])
+        ax.annotate(name, (vec[i][xi], vec[i][yi]))
+    plt.savefig(pdf, format='pdf')
+    pdf.close()
 
 
 def cluster_kmeans(names, vectors, k=5):
@@ -339,3 +349,6 @@ if __name__ == "__main__":
     print(reduced_vectors)
     print(reduced_vectors.shape)
     '''
+
+    # 4.5
+    plot(nameset, reduced_vectors)
