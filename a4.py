@@ -11,12 +11,13 @@
 import time
 
 import numpy as np
+
 import gzip
-
 import itertools
-from sklearn.feature_extraction.text import CountVectorizer
 
+from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
+from sklearn.decomposition import PCA
 
 
 def read_data(fname):
@@ -224,6 +225,29 @@ def reduce_dimensions(vectors, explained_var=0.99):
     lowdim_vectors  Vectors of shape (n_names, n_dims) where n_dims is
                     (much) lower than original n_features.
     """
+    n_components = 1
+
+    n_samples = len(vectors)
+    n_features = len(vectors[0])
+    max_components = min(n_samples, n_features)
+
+    # while True:
+    while n_components < max_components:
+        pca = PCA(n_components=n_components)
+        pca.fit(vectors)
+
+        if sum(pca.explained_variance_) > explained_var:
+            return pca.transform(vectors)
+
+        n_components += 1
+
+    # in the rare case when the demensions of the vectors cannot be reduced by PCA with our setting(explained_var, svd_solver='full')
+    # this may happen when explained_var is set overly large
+
+    # or raise an error or throw an exception?
+
+    print("Failed in PCA with our setting!")
+    return vectors
 
 
 def plot(names, vec, xi=0, yi=1, filename='plot-2d.pdf'):
@@ -306,4 +330,12 @@ if __name__ == "__main__":
     '''
 
     # 4.3
-    most_similar('Lagarde', nameset, vectors)
+    # most_similar('Lagarde', nameset, vectors)
+    '''print(vectors.shape)'''
+
+    # 4.4
+    reduced_vectors = reduce_dimensions(vectors)
+    '''
+    print(reduced_vectors)
+    print(reduced_vectors.shape)
+    '''
