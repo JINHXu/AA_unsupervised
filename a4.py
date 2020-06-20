@@ -22,6 +22,8 @@ from sklearn.decomposition import PCA
 from matplotlib import pyplot as plt
 import matplotlib.backends.backend_pdf
 
+from sklearn.cluster import KMeans
+
 
 def read_data(fname):
     """ Read the tab-separated data.
@@ -286,10 +288,22 @@ def cluster_kmeans(names, vectors, k=5):
     names       Screen names
     vectors     Corresponding vectors (n_names, n_dims)
     k           Number of clusters
-    filename    The output file name
 
     Returns: None
     """
+    kmeans = KMeans(n_clusters=k, random_state=0).fit(vectors)
+    labels = kmeans.labels_
+    label2names = dict()
+    for name, label in zip(names, labels):
+        if label in label2names:
+            label2names[label].append(name)
+        else:
+            label2names[label] = [name]
+
+    # print k clusters
+    for label in range(k):
+        print(f'{label}:', end=" ")
+        print(*label2names[label])
 
 
 def plot_scree(vectors, max_k=20, filename="scree-plot.pdf"):
@@ -351,4 +365,7 @@ if __name__ == "__main__":
     '''
 
     # 4.5
-    plot(nameset, reduced_vectors)
+    # plot(nameset, reduced_vectors)
+
+    # 4.6
+    cluster_kmeans(nameset, reduced_vectors)
