@@ -23,6 +23,7 @@ from matplotlib import pyplot as plt
 import matplotlib.backends.backend_pdf
 
 from sklearn.cluster import KMeans
+from sklearn.metrics import silhouette_score
 
 
 def read_data(fname):
@@ -321,6 +322,19 @@ def plot_scree(vectors, max_k=20, filename="scree-plot.pdf"):
 
     Returns: None
     """
+    pdf = matplotlib.backends.backend_pdf.PdfPages(filename)
+    y = []
+    x = range(2, max_k+1)
+    for k in x:
+        kmeans = KMeans(n_clusters=k)
+        preds = kmeans.fit_predict(vectors)
+        score = silhouette_score(vectors, preds)
+        y.append(score)
+
+    plt.plot(x, y, 'ro-', linewidth=2)
+
+    plt.savefig(pdf, format='pdf')
+    pdf.close()
 
 
 if __name__ == "__main__":
@@ -369,3 +383,6 @@ if __name__ == "__main__":
 
     # 4.6
     cluster_kmeans(nameset, reduced_vectors)
+
+    # 4.7
+    plot_scree(reduced_vectors)
