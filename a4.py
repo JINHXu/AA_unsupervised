@@ -3,7 +3,7 @@
     See <https://snlp2020.github.io/a4/> for detailed instructions.
     Course:      Statistical Language processing - SS2020
     Assignment:  a4
-    Author(s):   Jinghua Xu
+    Author(s):   Svea Klaus, Jinghua Xu
     Description: Unsupervised learning with sklearn, an experiment with dimensionality reduction with PCA and clustering using k-means.
     
     Honor Code:  I pledge that this program represents my own work.
@@ -82,34 +82,7 @@ def encode_people(names, texts):
     nameset:    (Unique) set of screen names 
     avg_vectors:    Corresponding average word-count vectors
     """
-    '''
-    nameset = []
 
-    # vectorize the texts
-    vectorizer = CountVectorizer()
-    vectorized_texts = vectorizer.fit_transform(texts).toarray()
-
-    n = len(vectorized_texts[0])
-    avg_vectors = np.empty((0, n), int)
-
-    # dictionary stores the mapping from each name to its corpus
-    name2vectors = dict()
-
-    for (name, vector) in zip(names, vectorized_texts):
-        if name not in name2vectors:
-            name2vectors[name] = [vector]
-        else:
-            name2vectors[name].append(vector)
-
-    for name, vectors in name2vectors.items():
-        nameset.append(name)
-        # average over these document vectors for each person
-        avg_vector = np.mean(vectors, axis=0)
-        avg_vector = np.reshape(avg_vector, (1, avg_vector.size))
-        avg_vectors = np.append(avg_vectors, avg_vector, axis=0)
-
-    return nameset, avg_vectors
-    '''
     nameset = []
     avg_vectors = []
 
@@ -168,8 +141,6 @@ def most_similar(name, names, vectors, n=10):
         vector = vector.reshape(1, -1)
         cosine_similarities.append(
             cosine_similarity(name_vector, vector)[0][0])
-    # test
-    # print(cosine_similarities)
 
     # prepare the copies as we remove from the list for max and min n times
     cs_cp4max = cosine_similarities.copy()
@@ -250,7 +221,7 @@ def reduce_dimensions(vectors, explained_var=0.99):
     # in the rare case when the demensions of the vectors cannot be reduced by PCA with our setting(explained_var, svd_solver='full')
     # this may happen when explained_var is set overly large
 
-    # or raise an error or throw an exception?
+    # or raise an error or throw an exception
 
     print("Failed in PCA with our setting!")
     return vectors
@@ -277,8 +248,12 @@ def plot(names, vec, xi=0, yi=1, filename='plot-2d.pdf'):
     for i, name in enumerate(names):
         ax.scatter(vec[i][xi], vec[i][yi])
         ax.annotate(name, (vec[i][xi], vec[i][yi]))
+    plt.title('Screen Names')
+    plt.xlabel('The '+str(xi+1)+'-th dimension of each user vector')
+    plt.ylabel('The '+str(yi+1)+'-th dimension of each user vector')
     plt.savefig(pdf, format='pdf')
     pdf.close()
+    ax.clear()
 
 
 def cluster_kmeans(names, vectors, k=5):
@@ -331,6 +306,10 @@ def plot_scree(vectors, max_k=20, filename="scree-plot.pdf"):
         score = silhouette_score(vectors, preds)
         y.append(score)
 
+    plt.title('Scree Plot')
+    plt.xlabel('k(as in k-clusters)')
+    plt.ylabel('silhouette score')
+
     plt.plot(x, y, 'ro-', linewidth=2)
 
     plt.savefig(pdf, format='pdf')
@@ -368,7 +347,7 @@ if __name__ == "__main__":
     '''
 
     # 4.3
-    # most_similar('Lagarde', nameset, vectors)
+    most_similar('Lagarde', nameset, vectors)
     '''print(vectors.shape)'''
 
     # 4.4
@@ -379,7 +358,7 @@ if __name__ == "__main__":
     '''
 
     # 4.5
-    # plot(nameset, reduced_vectors)
+    plot(nameset, reduced_vectors)
 
     # 4.6
     cluster_kmeans(nameset, reduced_vectors)
