@@ -1,11 +1,10 @@
 #!/usr/bin/env python3
-""" Statistical Language Processing (SNLP), Assignment 4
-    See <https://snlp2020.github.io/a4/> for detailed instructions.
+""" 
+    <https://snlp2020.github.io/a4/
     Course:      Statistical Language processing - SS2020
     Assignment:  a4
-    Author(s):   Svea Klaus, Jinghua Xu
+    Jinghua Xu
     Description: Unsupervised learning with sklearn, an experiment with dimensionality reduction with PCA and clustering using k-means.
-    
     Honor Code:  I pledge that this program represents my own work.
 """
 import time
@@ -65,12 +64,10 @@ def encode_people(names, texts):
     """ Encode each person in the data as a (sparse) vector.
 
     The input to this function are the texts associated with screen
-    names in the data. You are required to encode the texts using
+    names in the data. Encode the texts using
     CountVectorizer (from sklearn), and take the average of all
     vectors belonging to the same person.
 
-    You are free to use either sparse or dense matrices for the
-    output.
 
     Parameters:
     -----------
@@ -182,9 +179,7 @@ def reduce_dimensions(vectors, explained_var=0.99):
     """ Reduce the dimensionality with PCA (technique, not necessarily the implementation).
 
     Transform 'vectors' to a lower dimensional space with PCA and return
-    the lower dimensional vectors. You can use any PCA implementation,
-    e.g., PCA or TruncatedSVD from sklearn (scipy also has PCA/SVD
-    implementations).
+    the lower dimensional vectors.
 
     The number of dimensions to return should be determined by the
     parameter explained_var, such that the total variance
