@@ -1,7 +1,7 @@
 # [Clutering Tweets](https://snlp2020.github.io/a4/)
 Experiment with unsupervised methods.
 
-[Data Collection](https://snlp2020.github.io/a1/)<br>
+[Data Collection](https://github.com/JINHXu/TwitterCrawler)<br>
 [smaller sample](a4-corpus-small.tsv.gz)
 (in accordance with Twitter's developer policy).<br>
 [Full data set available only in private repo](https://github.com/snlp2020/snlp).
